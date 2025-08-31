@@ -37,26 +37,26 @@ player_move_right = [5, 0]
 player_move_up = [0, -5]
 player_move_left = [-5, 0]
 
-def create_enemy():
-    enemy_size = (30, 30)
-    enemy = pygame.image.load('enemy3.png').convert_alpha() # pygame.Surface(enemy_size)
-    # enemy.fill(COLOR_BLUE)
-    enemy_rect = pygame.Rect(WIDTH, random.randint(0, (HEIGHT-enemy.get_height())), *enemy_size)
-    enemy_move = [random.randint(-8, -4), 0]
-    return [enemy, enemy_rect, enemy_move]
+def create_cloud():
+    cloud_size = (30, 30)
+    cloud = pygame.image.load('cloud.png').convert_alpha() # pygame.Surface(cloud_size)
+    # cloud.fill(COLOR_BLUE)
+    cloud_rect = pygame.Rect(WIDTH, random.randint(0, (HEIGHT-cloud.get_height())), *cloud_size)
+    cloud_move = [random.randint(-8, -4), 0]
+    return [cloud, cloud_rect, cloud_move]
 
 def create_bonus():
     bonus_size = (40, 40)
-    bonus = pygame.Surface(bonus_size) # pygame.image.load('bonus.png').convert_alpha()
-    bonus.fill(COLOR_RED)
-    # bonus_rect = pygame.Rect(random.randint(0, WIDTH), 0, *bonus_size)
+    bonus = pygame.image.load('bonus.png').convert_alpha() # pygame.Surface(bonus_size)
+    # bonus.fill(COLOR_RED)
+    bonus_rect = pygame.Rect(random.randint(0, WIDTH), 0, *bonus_size)
     bonus_rect = pygame.Rect(random.randint(0+15, (WIDTH-bonus.get_width())), -(bonus.get_height()), *bonus_size)
     bonus_move = [0, random.randint(4, 8)]
     return [bonus, bonus_rect, bonus_move]
 
-CREATE_ENEMY = pygame.USEREVENT + 1
-CREATE_BONUS = CREATE_ENEMY + 1
-pygame.time.set_timer(CREATE_ENEMY, 2800)
+CREATE_cloud = pygame.USEREVENT + 1
+CREATE_BONUS = CREATE_cloud + 1
+pygame.time.set_timer(CREATE_cloud, 2800)
 pygame.time.set_timer(CREATE_BONUS, 3000)
 CHANGE_IMAGE = pygame.USEREVENT + 3
 pygame.time.set_timer(CHANGE_IMAGE, 200)
@@ -74,14 +74,14 @@ while playing:
     for event in pygame.event.get():
         if event.type == QUIT:
             playing = False
-        if event.type == CREATE_ENEMY:
-            enemies.append(create_enemy())
+        if event.type == CREATE_cloud:
+            enemies.append(create_cloud())
         if event.type == CREATE_BONUS:
             bonuses.append(create_bonus())
         if event.type == CHANGE_IMAGE:
             player = pygame.image.load(os.path.join(IMAGE_PATH, PLAYER_IMAGES[image_index]))
-            for enemy in enemies:
-                enemy[0] = pygame.image.load(os.path.join(IMAGE_PATH, PLAYER_IMAGES[image_index]))
+            for cloud in enemies:
+                cloud[0] = pygame.image.load(os.path.join(IMAGE_PATH, PLAYER_IMAGES[image_index]))
             image_index += 1
             if image_index >= len(PLAYER_IMAGES):
                 image_index = 0
@@ -110,11 +110,11 @@ while playing:
     if keys[K_LEFT] and player_rect.left > 0:
         player_rect = player_rect.move(player_move_left)
 
-    for enemy in enemies:
-        enemy[1] = enemy[1].move(enemy[2])
-        main_display.blit(enemy[0], enemy[1])
+    for cloud in enemies:
+        cloud[1] = cloud[1].move(cloud[2])
+        main_display.blit(cloud[0], cloud[1])
 
-        if player_rect.colliderect(enemy[1]):
+        if player_rect.colliderect(cloud[1]):
             playing = False
 
     for bonus in bonuses:
@@ -129,9 +129,9 @@ while playing:
     main_display.blit(player, player_rect)
     pygame.display.flip()       
 
-    for enemy in enemies:
-        if enemy[1].left < (0-int(enemy[0].get_width())):
-            enemies.pop(enemies.index(enemy))
+    for cloud in enemies:
+        if cloud[1].left < (0-int(cloud[0].get_width())):
+            enemies.pop(enemies.index(cloud))
 
     for bonus in bonuses:
         if bonus[1].bottom > HEIGHT:
